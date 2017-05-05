@@ -12,21 +12,21 @@ public class Book implements Parcelable {
 
     private String image;
     private String title;
-    private String overview;
-    private Double vote;
+    private int overview;
+    private int vote;
     private String release;
 
     public Book() {
         super();
     }
 
-    public Book(String image, String title, String overview, Double vote, String release) {
-        this.image = image;
-        this.title = title;
-        this.overview = overview;
-        this.vote = vote;
-        this.release = release;
-    }
+//    public Book(String image, String title, String overview, Double vote, String release) {
+//        this.image = image;
+//        this.title = title;
+//        this.overview = overview;
+//        this.vote = vote;
+//        this.release = release;
+//    }
 
     public String getImage() {
         return image;
@@ -44,19 +44,19 @@ public class Book implements Parcelable {
         this.title = title;
     }
 
-    public void setOverview(String overview) {
+    public void setOverview(int overview) {
         this.overview = overview;
     }
 
-    public String getOverview() {
+    public int getOverview() {
         return overview;
     }
 
-    public void setVote(Double vote) {
+    public void setVote(int vote) {
         this.vote = vote;
     }
 
-    public Double getVote() {
+    public int getVote() {
         return vote;
     }
 
@@ -77,7 +77,7 @@ public class Book implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(image);
         dest.writeString(title);
-        dest.writeString(overview);
+        dest.writeInt(overview);
         dest.writeDouble(vote);
         dest.writeString(release);
     }
@@ -96,8 +96,8 @@ public class Book implements Parcelable {
     public Book(Parcel in) {
         image = in.readString();
         title = in.readString();
-        overview = in.readString();
-        vote = in.readDouble();
+        overview = in.readInt();
+        vote = in.readInt();
         release = in.readString();
     }
 }

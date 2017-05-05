@@ -7,5 +7,5 @@ import java.util.ArrayList;
  */
 
 public interface AsyncResponse {
-    void processFinish(ArrayList<Book> strings);
+    void processFinish(ArrayList<Object> strings);
 }

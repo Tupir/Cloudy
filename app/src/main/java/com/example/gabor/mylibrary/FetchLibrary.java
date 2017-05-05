@@ -24,58 +24,100 @@ import java.net.URL;
 import java.util.ArrayList;
 
 
-
-public class FetchLibrary extends AsyncTask<Void, Void, ArrayList<Book>> {
+public class FetchLibrary extends AsyncTask<Void, Void, String> {
 
     private final String LOG_TAG = FetchLibrary.class.getSimpleName();
-    ArrayList<Book> books = new ArrayList<>();
+    ArrayList<Object> books = new ArrayList<>();
     public AsyncResponse delegate = null;
-    Context applicationContext = MainActivityFragment.getContextOfApplication();
+    //Context applicationContext = MainActivityFragment.getContextOfApplication();
+    String baseUrl;
+    Class claz;
 
 
-
-    public FetchLibrary(AsyncResponse delegate){
+    public FetchLibrary(AsyncResponse delegate, String baseUrl, Class claz){
         this.delegate = delegate;
+        this.baseUrl = baseUrl;
+        this.claz = claz;
     }
 
-
-
-    private ArrayList<Book> getMovieDataFromJson(String forecastJsonStr)
+    private ArrayList<Object> getMovieDataFromJson2(String forecastJsonStr)
             throws JSONException {
 
         // These are the names of the JSON objects that need to be extracted.
-        final String OWM_RESULT = "books";
-        final String OWM_POSTER = "name";
-        final String OWM_TITLE = "page_count";
-        final String OWM_OVERVIEW = "img";
-        final String OWM_VOTE = "date_publish";
-        final String OWM_RELEASE = "description";
+        final String OWM_RESULT = "data";
 
+        final String OWM_POSTER = "pageCount";
+        final String OWM_TITLE = "name";
+        final String OWM_OVERVIEW = "publishYear";
+        final String OWM_VOTE = "imageSrc";
+        final String OWM_RELEASE = "rowKey";
 
         JSONObject forecastJson = new JSONObject(forecastJsonStr);
 
-
         JSONArray weatherArray = forecastJson.getJSONArray(OWM_RESULT);
 
-        //movies = new ArrayList<>(); // clear
         books.clear();
         Book book;
 
         for(int i = 0; i < weatherArray.length(); i++) {
             JSONObject movieForecast = weatherArray.getJSONObject(i);
-            String pict = movieForecast.getString(OWM_POSTER);
+            int pict = movieForecast.getInt(OWM_POSTER);
             String title = movieForecast.getString(OWM_TITLE);
-            String overview = movieForecast.getString(OWM_OVERVIEW);
-            Double vote = movieForecast.getDouble(OWM_VOTE);
+            int overview = movieForecast.getInt(OWM_OVERVIEW);
+            String vote = movieForecast.getString(OWM_VOTE);
             String release = movieForecast.getString(OWM_RELEASE);
 
             //String complete_url = "https://images-na.ssl-images-amazon.com/images/I/" + pict;
             book = new Book();
-            book.setImage(overview);    // OBRAZOK JEDINY FUNKCNY...PREROB
-            book.setTitle(pict);
-            book.setOverview(overview);
-            book.setVote(vote);
+            book.setOverview(pict);
+            book.setTitle(title);
+            book.setVote(overview);
+            book.setImage(vote);
             book.setRelease(release);
+
+            //Log.v("complete url", movie.getImage());
+            books.add(book);
+        }
+        return books;
+    }
+
+
+
+    private ArrayList<Object> getMovieDataFromJson(String forecastJsonStr)
+            throws JSONException {
+
+        // These are the names of the JSON objects that need to be extracted.
+        final String OWM_RESULT = "data";
+
+        final String OWM_POSTER = "pageCount";
+        final String OWM_TITLE = "name";
+        final String OWM_OVERVIEW = "publishYear";
+        final String OWM_VOTE = "imageSrc";
+        final String OWM_RELEASE = "rowKey";
+
+        JSONObject forecastJson = new JSONObject(forecastJsonStr);
+
+        JSONArray weatherArray = forecastJson.getJSONArray(OWM_RESULT);
+
+        books.clear();
+        Book book;
+
+        for(int i = 0; i < weatherArray.length(); i++) {
+            JSONObject movieForecast = weatherArray.getJSONObject(i);
+            int pict = movieForecast.getInt(OWM_POSTER);
+            String title = movieForecast.getString(OWM_TITLE);
+            int overview = movieForecast.getInt(OWM_OVERVIEW);
+            String vote = movieForecast.getString(OWM_VOTE);
+            String release = movieForecast.getString(OWM_RELEASE);
+
+            //String complete_url = "https://images-na.ssl-images-amazon.com/images/I/" + pict;
+            book = new Book();
+            book.setOverview(pict);
+            book.setTitle(title);
+            book.setVote(overview);
+            book.setImage(vote);
+            book.setRelease(release);
+
             //Log.v("complete url", movie.getImage());
             books.add(book);
         }
@@ -84,14 +126,14 @@ public class FetchLibrary extends AsyncTask<Void, Void, ArrayList<Book>> {
 
 
     @Override
-    protected ArrayList<Book> doInBackground(Void... params) {
+    protected String doInBackground(Void... params) {
         // These two need to be declared outside the try/catch
         // so that they can be closed in the finally block.
         HttpURLConnection urlConnection = null;
         BufferedReader reader = null;
         // Will contain the raw JSON response as a string.
         String forecastJsonStr = null;
-        String baseUrl;
+
 
 //        // get settings using context from MainActivityFragment
 //        SharedPreferences sharedPrefs = PreferenceManager.getDefaultSharedPreferences(applicationContext);
@@ -99,8 +141,8 @@ public class FetchLibrary extends AsyncTask<Void, Void, ArrayList<Book>> {
 //                applicationContext.getResources().getString(R.string.pref_units_key),
 //                applicationContext.getResources().getString(R.string.pref_units_popular));
 
-
-        baseUrl = "http://library.dev.tyrion.webforrent.sk/knihy.json";
+        //baseUrl = "http://friendlibrary.azurewebsites.net/api/book/list";
+        //baseUrl = "http://friendlibrary.azurewebsites.net/api/book/list";
 
         try {
 //            if(unitType.equals(applicationContext.getResources().getString(R.string.pref_units_popular)))
@@ -156,20 +198,30 @@ public class FetchLibrary extends AsyncTask<Void, Void, ArrayList<Book>> {
             }
         }
 
-        try {
-            return getMovieDataFromJson(forecastJsonStr);
-        } catch (JSONException e) {
-            Log.e(LOG_TAG, e.getMessage(), e);
-            e.printStackTrace();
-        }
+        return forecastJsonStr;
 
-        return null;
+//        try {
+//            return getMovieDataFromJson(forecastJsonStr);
+//        } catch (JSONException e) {
+//            Log.e(LOG_TAG, e.getMessage(), e);
+//            e.printStackTrace();
+//        }
+//
+//        return null;
     }
 
     @Override
-    protected void onPostExecute(ArrayList<Book> strings) {
+    protected void onPostExecute(String strings) {
         super.onPostExecute(strings);
-        delegate.processFinish(strings);
+
+        ArrayList<Object> filip = null;
+        try {
+            filip = getMovieDataFromJson(strings);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        delegate.processFinish(filip);
     }
 
 
