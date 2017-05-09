@@ -1,36 +1,45 @@
 package com.example.gabor.mylibrary;
 
+import android.app.ListActivity;
 import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class Intro extends AppCompatActivity {
+public class DetailsActivity extends AppCompatActivity {
     private TextView titleTextView;
     //   private ImageView imageView;
 
-//    @Bind(R.id.textView2)
-//    TextView textOverview;
-
-    public static String [] prgmNameList={" PETER GABOR", " JAN NEJAN", " JOZKO MRKVA"};
-    public static String [] prgmNameList1={"3 NEW!", "1 NEW!", "7 NEW!"};
+    @Bind(R.id.overview)
+    TextView textOverview;
+    @Bind(R.id.vote)
+    TextView textVote;
+//    @Bind(R.id.release)
+//    TextView textRelease;
+    @Bind(R.id.imageView1)
+    ImageView imageView;
+    public static String [] prgmNameList={"Peter GABOR: Nic pre mna, strata casu","Veronika FRICOVA: Este som ju necitala ale chystam sa, mate nejake rady?",
+            "Jozko MRKVA: Urcite skus! Najlepsia kniha aku som kedy cital. Uz netrpezlivo cakam na nove casti",};
     ListView lv;
     Context context;
 
@@ -39,21 +48,34 @@ public class Intro extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_intro);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setContentView(R.layout.activity_details);
+
 
         context=this;
 
-        lv=(ListView) findViewById(R.id.lvLocations);
-        lv.setAdapter(new Intro.CustomAdapter(this, prgmNameList, prgmNameList1));
+        lv=(ListView) findViewById(R.id.listView);
+        lv.setAdapter(new CustomAdapter(this, prgmNameList));
 
-//        ButterKnife.bind(this); // before setText
-        //butt.setText("VISIT");
+
+        Book mov = getIntent().getParcelableExtra("mov");
+
+        ButterKnife.bind(this); // before setText
+
+        if (mov != null) {
+            textOverview.setText(mov.getTitle()+"\nPages: "+ mov.getOverview()+"\nPublish year: 2016");
+            //textVote.setText(mov.getVote() + "/10.00");
+            //textRelease.setText(mov.getRelease());
+            getSupportActionBar().setTitle(mov.getTitle());
+            Picasso.with(this)
+                    .load(mov.getImage())
+                    .placeholder(R.drawable.no_image)
+                    .error(R.drawable.no_image)
+                    .into(imageView);
+        }
+
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); // for back button
 
     }
-
 
 
     @Override
@@ -63,37 +85,26 @@ public class Intro extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            // Respond to the action bar's Up/Home button
+//            case android.R.id.home:
+//                NavUtils.navigateUpFromSameTask(this);
+//                return true;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            startActivity(new Intent(this, MainActivity.class));
-            return true;
-        }
-
-        if (id == R.id.action_profile) {
-            startActivity(new Intent(this, Profile.class));
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
 
     public class CustomAdapter extends BaseAdapter {
         String [] result;
-        String [] result1;
         Context context;
         int [] imageId;
         private LayoutInflater inflater=null;
-        public CustomAdapter(Intro mainActivity, String[] prgmNameList, String[] prgmNameList1) {
+        public CustomAdapter(DetailsActivity mainActivity, String[] prgmNameList) {
             result=prgmNameList;
-            result1 = prgmNameList1;
             context=mainActivity;
             inflater = ( LayoutInflater )context.
                     getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -120,15 +131,12 @@ public class Intro extends AppCompatActivity {
         }
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            Intro.CustomAdapter.Holder holder=new Intro.CustomAdapter.Holder();
+            Holder holder=new Holder();
             View rowView;
             //rowView = inflater.inflate(R.layout.listview_item, null);
-            rowView = inflater.inflate(R.layout.listview_item2, null);
-            holder.tv=(TextView) rowView.findViewById(R.id.textView55);
+            rowView = inflater.inflate(R.layout.listview_item1, null);
+            holder.tv=(TextView) rowView.findViewById(R.id.textView11);
             holder.tv.setText(result[position]);
-            holder.tv=(TextView) rowView.findViewById(R.id.textView56);
-            holder.tv.setText(result1[position]);
-
 //            rowView.setOnClickListener(new View.OnClickListener() {
 //                @Override
 //                public void onClick(View v) {

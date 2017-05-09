@@ -69,7 +69,7 @@ public class Adapter extends ArrayAdapter<Object> {
                 .error(R.drawable.no_image)
                 .into(holder.imageview);
 
-        holder.titleview.setText(book.getTitle());
+        holder.titleview.setText(book.getTitle()+"\n("+book.getOverview()+")");
 
 
         return convertView;

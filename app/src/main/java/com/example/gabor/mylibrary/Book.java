@@ -20,13 +20,13 @@ public class Book implements Parcelable {
         super();
     }
 
-//    public Book(String image, String title, String overview, Double vote, String release) {
-//        this.image = image;
-//        this.title = title;
-//        this.overview = overview;
-//        this.vote = vote;
-//        this.release = release;
-//    }
+    public Book(String image, String title, int overview, int vote, String release) {
+        this.image = image;
+        this.title = title;
+        this.overview = overview;
+        this.vote = vote;
+        this.release = release;
+    }
 
     public String getImage() {
         return image;

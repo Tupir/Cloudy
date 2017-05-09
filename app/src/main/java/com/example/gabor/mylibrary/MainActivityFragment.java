@@ -1,11 +1,13 @@
 package com.example.gabor.mylibrary;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -17,8 +19,6 @@ import java.util.List;
  * A placeholder fragment containing a simple view.
  */
 public class MainActivityFragment extends Fragment implements AsyncResponse{
-    String[] mobileArray = {"Android","IPhone","WindowsMobile","Blackberry",
-            "WebOS","Ubuntu","Windows7","Max OS X"};
     public static Context contextOfApplication;
     Adapter adapter;
     ListView listView;
@@ -45,13 +45,30 @@ public class MainActivityFragment extends Fragment implements AsyncResponse{
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         contextOfApplication = getActivity().getApplicationContext();
-
-//        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
-//                R.layout.listview_item, R.id.Itemname, mobileArray);
-//
-//
         listView = (ListView) rootView.findViewById(R.id.mobile_list);
-//        listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+
+                //Get item at position
+                Book item = (Book) parent.getItemAtPosition(position);
+
+//                //Pass the image title and url to DetailsActivity
+//                Intent intent = new Intent(getActivity(), DetailsActivity.class);
+//                intent.putExtra("title", item.getTitle());  // toolbar
+//                intent.putExtra("image", item.getImage());
+//                intent.putExtra("overview", item.getOverview());
+//                intent.putExtra("vote", item.getVote());
+//                intent.putExtra("release", item.getRelease());
+
+                Intent intent = new Intent(getActivity(), DetailsActivity.class);
+                Book mov = new Book(item.getImage(),item.getTitle(), item.getOverview(),
+                        item.getVote(),item.getRelease());
+                intent.putExtra("mov", mov);
+                //Start details activity
+                startActivity(intent);
+            }
+        });
 
         return rootView;
     }
